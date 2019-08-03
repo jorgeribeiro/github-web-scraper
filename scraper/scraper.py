@@ -7,3 +7,5 @@ class RepositoriesReader:
             self.f = open('repositories.txt', 'w+')
         return self.f
 
+    def read_repositories(self):
+        
