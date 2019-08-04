@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from scraper import repositories_requester
+from scraper.repositories_requester import request_repo
 
 TEST_REPO = 'jorgimello/github-web-scraper'
 
-def test_request_repo():
-	assert repositories_requester.request_repo(TEST_REPO) is not None
+def test_repo_request():
+	assert request_repo(TEST_REPO) is not None
