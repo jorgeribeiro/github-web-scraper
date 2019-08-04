@@ -20,6 +20,7 @@ def scrap_table():
 repos = read_repositories_file()
 
 # 2. Realizar operações em cada repositório
+	# Operações: ler linhas, gerar árvore e salvar arquivo .txt
 for r in repos:
 	response = request_repo(r)
 	soup = BeautifulSoup(response.text, 'html.parser')

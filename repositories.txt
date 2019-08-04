@@ -1,2 +1,1 @@
 jorgimello/github-web-scraper
-jorgimello/github-web-scraperss
