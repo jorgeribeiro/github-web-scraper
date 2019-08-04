@@ -6,7 +6,7 @@ def open_repositories_file():
     try:
         f = open('../' + REPOSITORIES_FILENAME, 'r')
     except FileNotFoundError:
-        print(REPOSITORIES_FILENAME + ' not found. Creating...')
+        print('[+] Arquivo ' + REPOSITORIES_FILENAME + ' não encontrado. Criando um para você...')
         f = open('../' + REPOSITORIES_FILENAME, 'w+')         
     return f
 
