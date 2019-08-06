@@ -3,7 +3,6 @@
 from repositories_reader import read_repositories_file
 from repositories_requester import request_url
 
-import requests
 import re
 from bs4 import BeautifulSoup
 
@@ -26,8 +25,6 @@ def extract_folder_content(url):
 
 def extract_file_content(url):
 	# Extrai conteúdo de um arquivo
-	response = request_url(url)
-	soup = BeautifulSoup(response.text, 'html.parser')
 	# TODO: finalizar web scraping de arquivo (linhas e bytes)
 	pass
 
@@ -39,7 +36,6 @@ for r in repos:
 	if not is_valid_repository(r):
 		continue
 	project_root_links = extract_folder_content(r)
-
 	# Se lista não vazia, repositório existe
 	if project_root_links:
 		folders = project_root_links.find_all(href=re.compile(r + PATH_TO_FOLDERS))

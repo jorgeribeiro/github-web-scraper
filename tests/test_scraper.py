@@ -6,6 +6,6 @@ VALID_REPO = 'jorgimello/github-web-scraper'
 def test_valid_repo_string():
 	assert is_valid_repository(VALID_REPO) is True
 
-INVALID_REPO = 'not-a-repo'
+INVALID_REPO = '////'
 def test_invalid_repo_string():
 	assert is_valid_repository(INVALID_REPO) is False
