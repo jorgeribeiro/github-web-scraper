@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from scraper.repositories_requester import request_url
+from repositories_requester import request_url
 
 VALID_REPO = 'jorgimello/github-web-scraper'
 def test_valid_repo_url():
