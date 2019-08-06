@@ -40,7 +40,6 @@ for r in repos:
 	if project_root_links:
 		folders = project_root_links.find_all(href=re.compile(r + PATH_TO_FOLDERS))
 		files = project_root_links.find_all(href=re.compile(r + PATH_TO_FILES))
-		
 		for i in folders:
 			print(i['href'])
 
