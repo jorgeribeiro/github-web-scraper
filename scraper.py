@@ -19,6 +19,7 @@ def is_valid_repository(repository):
 
 def extract_folder_content(url):
 	# Extrai conteúdo de um diretório
+	# Retorna soup da tabela que contém os itens do diretório
 	response = request_url(url)
 	soup = BeautifulSoup(response.text, 'html.parser')
 	return soup.tbody
