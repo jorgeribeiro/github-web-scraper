@@ -2,17 +2,10 @@
 
 from repositories_reader import read_repositories_file
 from repositories_requester import request_url
+from utils import is_valid_repository, calculate_bytes
 
 import re
 from bs4 import BeautifulSoup
-
-def is_valid_repository(repository_string):
-    # Verifica se repositório está no formato <dono-do-projeto>/<nome-do-projeto>
-    # Evita requests em links existentes, mas que não estão no formato válido
-    words = repository_string.split('/')
-    if len(repository_string) >= 3 and len(words) == 2:
-        return True
-    return False
 
 def pull_folder_content(url):
     # Extrai conteúdo de um diretório
@@ -29,6 +22,15 @@ def pull_file_content(url):
     response = request_url(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     return soup.find(FILE_ELEMENT_FINDER, class_=FILE_CLASS_FINDER)
+
+def retrieve_lines_and_bytes_from_file(url):
+    # Extrai número de linhas e bytes de um arquivo
+    div = pull_file_content(url)
+    div_text = [t.strip() for t in div.get_text().splitlines() if t.strip() != '']
+    l, b = div_text[0], div_text[1]
+    lines = [int(s) for s in l.split() if s.isdigit()][0]
+    bytes_ = calculate_bytes(b)
+    return lines, bytes_
 
 PATH_TO_FOLDERS = '/tree/master'
 PATH_TO_FILES = '/blob/master'
@@ -50,7 +52,6 @@ def extract_content_href(repository_html):
     return hrefs_to_folders, hrefs_to_files
 
 def explore_repo(repository_html):
-    # Enquanto não for arquivo, go deeper
     # TODO: continuar método
     folders, files = extract_content_href(repository_html)
     for f in folders:
@@ -70,11 +71,7 @@ for repo_name in repo_names:
     if project_root_html: 
         explore_repo(project_root_html)
         
-# Apenas um teste pra armazenar a árvore de arquivos em um dict. Muito complicado dessa forma
-# Mantendo aqui porque deu trabalho pensar nisso
-# test = {'folder1': {'folder2': {'file1': {'lines': 9, 'bytes': 10}, 'file2': {'lines': 15, 'bytes': 20}}, 'file3': {'lines': 30, 'bytes': 50}}}
-
-# Ideia de como armazenar extensões, linhas e bytes
+# Ideia de como armazenar extensões, linhas e bytes:
 # Um dict pra armazenar número de linhas e bytes, e uma lista pra guardar as keys
 # files = {'js': {'lines': 9, 'bytes': 15}, 'txt': {'lines': 10, 'bytes': 15}, 'yml': {'lines': 20, 'bytes': 30}}
 # extensions = ['js', 'txt', 'yml']
