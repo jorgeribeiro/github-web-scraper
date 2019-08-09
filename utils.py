@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
 
 def is_valid_repository(repository_string):
-    # Verifica se repositório está no formato <dono-do-projeto>/<nome-do-projeto>
-    # Evita requests em links existentes, mas que não estão no formato válido
+    """Verifica se repositório está no formato <dono-do-projeto>/<nome-do-projeto>
+    Evita requests em links existentes, mas que não estão no formato válido
+    """
     words = repository_string.split('/')
     if len(repository_string) >= 3 and len(words) == 2:
         return True
     return False
 
 def calculate_bytes(size_unit_str):
-    # Calcula bytes de um arquivo
-    # Recebe uma string de tamanho 2 no formato 'size unit'
+    """Calcula bytes de um arquivo
+    Recebe uma string de tamanho 2 no formato 'size unit'
+    """
     try:
         size, unit = size_unit_str.split()
-        print(size, unit)
         if unit == 'Bytes':
             return float(size)
         elif unit == 'KB':
@@ -24,3 +25,14 @@ def calculate_bytes(size_unit_str):
             return -1
     except ValueError:
         return -1
+
+def get_folder_or_file_name(href=''):
+    """Retorna nome do diretório ou arquivo
+    Recebe uma string no formato caminho/para/diretorio
+    ou caminho/para/arquivo.extensao
+    """
+    name = href.split('/')
+    if len(name) > 1:
+        return name[-1]
+    else:
+        return ''
