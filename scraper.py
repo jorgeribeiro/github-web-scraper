@@ -29,6 +29,7 @@ def retrieve_lines_and_bytes_from_file(url):
     """Extrai número de linhas e bytes de um arquivo
     Retorna linhas e bytes se a div for encontrada
     TODO: possível refatoramento => receber apenas texto em vez do link do arquivo
+    TODO: verificar casos de arquivos sem linhas. Ex: https://github.com/vivadecora/backend-teste/blob/master/vivadecora-logo.png
     """
     div = pull_file_content(url)
     if div:
@@ -53,8 +54,11 @@ def extract_hrefs(repository_content):
     return hrefs_to_folders, hrefs_to_files
 
 def explore_repo_recursively(repository_content):
-    """Percorre recursivamente o repositório
+    """Método principal da aplicação
+    Percorre recursivamente o repositório
     TODO: imprimir conteúdo do repositório em forma de árvore
+    TODO: fazer requests nos arquivos e calcular linhas e bytes
+    TODO: armazenar tudo no .txt
     """
     folders, files = extract_hrefs(repository_content)
     for f in folders:
@@ -63,7 +67,6 @@ def explore_repo_recursively(repository_content):
         if ff:
             explore_repo_recursively(ff)
     for f in files:
-        # ff = pull_file_content(f)
         print(get_folder_or_file_name(f))
     return
 
@@ -78,7 +81,7 @@ for repo_name in repo_names:
         # Se repo_root não nulo, repositório encontrado => realizar exploração
         explore_repo_recursively(repo_root)
 
-"""        
+"""
 Ideia de como armazenar extensões, linhas e bytes:
 files = {'js': {'lines': 9, 'bytes': 15}, 'txt': {'lines': 10, 'bytes': 15}, 'yml': {'lines': 20, 'bytes': 30}}
 files.keys() retorna extensões
