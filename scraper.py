@@ -2,7 +2,7 @@
 
 from repositories_reader import read_repositories_file
 from repositories_requester import request_url
-from utils import is_valid_repository, calculate_bytes, get_folder_or_file_name, generate_str_with_spaces
+from utils import is_valid_repository, get_folder_or_file_name, generate_str_with_spaces
 
 import re
 from bs4 import BeautifulSoup
@@ -30,6 +30,20 @@ def pull_file_content(url):
     else:
         return []
 
+def handle_files_dict(f_dict, lines, bytes_, extension):
+    """Manuseia informações dos arquivos do repositório
+    Dados são inseridos e retornados em um dict
+    TODO: adicionar testes
+    """
+    if not f_dict:
+        f_dict = {}
+    if extension not in f_dict:
+        f_dict[extension] = {'lines': lines, 'bytes': bytes_}
+    else:
+        current_lines, current_bytes = f_dict[extension]['lines'], f_dict[extension]['bytes']
+        f_dict[extension] = {'lines': current_lines + lines, 'bytes': current_bytes + bytes_}
+    return f_dict        
+
 REGEX_TO_FOLDERS = '/tree/master'
 REGEX_TO_FILES = '/blob/master'
 def extract_hrefs(repository_content):
@@ -52,10 +66,10 @@ def explore_repository(repo_name, depth=0):
     if (repository_content):
         folders, files = extract_hrefs(repository_content)
         for f in folders:
-            print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=True))            
+            # print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=True))
             explore_repository(f, depth + 1)
         for f in files:
-            print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=False))
+            # print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=False))
             pull_file_content(f)
         return
     else:
@@ -66,7 +80,7 @@ if __name__ == '__main__':
     valid_repos = [repo for repo in repo_names if is_valid_repository(repo)]
     if len(valid_repos) >= 2:
         with Pool(3) as p:
-            # Explorar 3 repositórios paralelamente
+            # Explorar até 3 repositórios paralelamente
             p.map(explore_repository, valid_repos)
     else:
         for valid_repo in valid_repos:

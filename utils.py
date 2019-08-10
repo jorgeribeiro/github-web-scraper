@@ -70,16 +70,15 @@ def generate_str_with_spaces(depth, folder_or_file_name, is_folder):
     else:
         return s + folder_or_file_name + ' (n linhas)'
 
-def handle_files_dict(f_dict, lines, bytes_, extension):
-    """Manuseia informações dos arquivos do repositório
-    Dados são inseridos e retornados em um dict
+def get_file_extension(filename):
+    """Retorna tipo de extensão a partir do nome do arquivo
+    Verifica também casos em que não há extensão definida
     TODO: adicionar testes
     """
-    if not f_dict:
-        f_dict = {}
-    if extension not in f_dict:
-        f_dict[extension] = {'lines': lines, 'bytes': bytes_}
+    s = filename.split('.')
+    if len(s) == 1:
+        return '<outros>'
+    elif len(s) == 2 and s[0] == '':
+        return '<outros>'
     else:
-        current_lines, current_bytes = f_dict[extension]['lines'], f_dict[extension]['bytes']
-        f_dict[extension] = {'lines': current_lines + lines, 'bytes': current_bytes + bytes_}
-    return f_dict
+        return s[-1]
