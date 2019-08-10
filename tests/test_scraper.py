@@ -2,30 +2,21 @@
 
 from bs4 import BeautifulSoup
 
-from scraper import pull_folder_content, pull_file_content, retrieve_lines_and_bytes_from_file, extract_hrefs
+from scraper import pull_folder_content, pull_file_content, extract_hrefs
 
 def test_pull_on_valid_folder():
     assert pull_folder_content('jorgimello/github-web-scraper')
 
 def test_pull_on_invalid_folder():
-    assert pull_folder_content('not-a-folder') is None
+    assert pull_folder_content('invalid-user/invalid-folder') is None
 
 def test_pull_on_valid_file():
-    assert pull_file_content('jorgimello/github-web-scraper/blob/master/repositories.txt')
+    c = pull_file_content('jorgimello/github-web-scraper/blob/master/repositories.txt')
+    assert len(c) > 0
 
 def test_pull_on_invalid_file():
-    assert pull_file_content('jorgimello/github-web-scraper/tree/master/tests') is None
-
-def test_retrieve_lines_and_bytes_on_file():
-	assert retrieve_lines_and_bytes_from_file('jorgimello/github-web-scraper/blob/master/repositories.txt') != -1
-
-def test_retrieve_lines_and_bytes_on_non_lines_file():
-	lines, bytes_ = retrieve_lines_and_bytes_from_file('vivadecora/backend-teste/blob/master/vivadecora-logo.png')	
-	assert lines == 0
-	assert bytes_ >= 0
-
-def test_retrieve_lines_and_bytes_on_non_file():
-	assert retrieve_lines_and_bytes_from_file('jorgimello') == -1
+    c = pull_file_content('jorgimello/github-web-scraper/tree/master/tests')
+    assert len(c) == 0
 
 def test_extract_content_on_valid_folder():
 	f = pull_folder_content('jorgimello/github-web-scraper')

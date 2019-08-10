@@ -20,30 +20,15 @@ FILE_ELEMENT_FINDER = 'div'
 FILE_CLASS_FINDER = 'text-mono f6 flex-auto pr-3 flex-order-2 flex-md-order-1 mt-2 mt-md-0'
 def pull_file_content(url):
     """Extrai conteúdo de um arquivo
-    Retorna soup.div que contém informações do arquivo
+    Retorna lista com informações do arquivo (linhas e bytes)
     """
     response = request_url(url)
     soup = BeautifulSoup(response.text, 'html.parser')
-    return soup.find(FILE_ELEMENT_FINDER, class_=FILE_CLASS_FINDER)
-
-def retrieve_lines_and_bytes_from_file(url):
-    """Extrai número de linhas e bytes de um arquivo
-    Retorna linhas e bytes se a div for encontrada
-    """
-    div = pull_file_content(url)
+    div = soup.find(FILE_ELEMENT_FINDER, class_=FILE_CLASS_FINDER)
     if div:
-        div_text = [t.strip() for t in div.get_text().splitlines() if t.strip() != '']
-        if len(div_text) == 2:
-            lines = [int(s) for s in div_text[0].split() if s.isdigit()][0]
-            bytes_ = calculate_bytes(div_text[1])
-            return lines, bytes_            
-        else:
-            # Se o arquivo não possuir linhas (se for uma imagem, por exemplo)
-            lines = 0
-            bytes_ = calculate_bytes(div_text[0])
-            return lines, bytes_
+        return [t.strip() for t in div.get_text().splitlines() if t.strip() != '']
     else:
-        return -1
+        return []
 
 REGEX_TO_FOLDERS = '/tree/master'
 REGEX_TO_FILES = '/blob/master'
@@ -57,32 +42,35 @@ def extract_hrefs(repository_content):
     hrefs_to_files = [html['href'] for html in files_html]
     return hrefs_to_folders, hrefs_to_files
 
-def explore_repository(repository_content, depth):
+def explore_repository(repo_name, depth=0):
     """Método principal da aplicação
     Percorre recursivamente o repositório
     TODO: armazenar tudo no .txt
     TODO: utilizar dict global para armazenar linhas e bytes dos arquivos
     """
-    folders, files = extract_hrefs(repository_content)
-    for f in folders:
-        print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=True))
-        ff = pull_folder_content(f)
-        if ff:
-            explore_repository(ff, depth + 1)                
-    with Pool(10) as p:
-        records = p.map(retrieve_lines_and_bytes_from_file, files)
-    for f in files:
-        print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=False))
-    return
+    repository_content = pull_folder_content(repo_name)
+    if (repository_content):
+        folders, files = extract_hrefs(repository_content)
+        for f in folders:
+            print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=True))            
+            explore_repository(f, depth + 1)
+        for f in files:
+            print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=False))
+            pull_file_content(f)
+        return
+    else:
+        return
 
 if __name__ == '__main__':
     repo_names = read_repositories_file()
-    for repo_name in repo_names:
-        if not is_valid_repository(repo_name):
-            continue
-        repo_root = pull_folder_content(repo_name)
-        if repo_root:
-            explore_repository(repo_root, depth=0)
+    valid_repos = [repo for repo in repo_names if is_valid_repository(repo)]
+    if len(valid_repos) >= 2:
+        with Pool(3) as p:
+            # Explorar 3 repositórios paralelamente
+            p.map(explore_repository, valid_repos)
+    else:
+        for valid_repo in valid_repos:
+            explore_repository(valid_repo)
 
 """
 Ideia de como armazenar extensões, linhas e bytes:

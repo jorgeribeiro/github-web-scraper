@@ -37,8 +37,26 @@ def get_folder_or_file_name(href=''):
     else:
         return ''
 
+def get_lines_and_bytes(l):
+    """Retorna quantidade de linhas e bytes
+    Recebe uma lista de tamanho dois (para arquivos com linhas de código)
+    ou tamanho um (para arquivos sem linhas de código)
+    """
+    if l:
+        if len(l) == 2:
+            lines = [int(s) for s in l[0].split() if s.isdigit()][0]
+            bytes_ = calculate_bytes(l[1])
+            return lines, bytes_            
+        else:
+            # Se o arquivo não possuir linhas (se for uma imagem, por exemplo)
+            lines = 0
+            bytes_ = calculate_bytes(l[0])
+            return lines, bytes_
+    else:
+        return -1
+
 def generate_str_with_spaces(depth, folder_or_file_name, is_folder):
-    """Gera string com espaços
+    """Gera string com espaços de acordo com depth
     String gerada é utilizada para imprimir árvore de arquivos
     """
     s = ''
@@ -50,4 +68,18 @@ def generate_str_with_spaces(depth, folder_or_file_name, is_folder):
     if is_folder:
         return s + '[' + folder_or_file_name + ']'
     else:
-        return s + folder_or_file_name
+        return s + folder_or_file_name + ' (n linhas)'
+
+def handle_files_dict(f_dict, lines, bytes_, extension):
+    """Manuseia informações dos arquivos do repositório
+    Dados são inseridos e retornados em um dict
+    TODO: adicionar testes
+    """
+    if not f_dict:
+        f_dict = {}
+    if extension not in f_dict:
+        f_dict[extension] = {'lines': lines, 'bytes': bytes_}
+    else:
+        current_lines, current_bytes = f_dict[extension]['lines'], f_dict[extension]['bytes']
+        f_dict[extension] = {'lines': current_lines + lines, 'bytes': current_bytes + bytes_}
+    return f_dict
