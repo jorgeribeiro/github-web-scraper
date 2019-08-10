@@ -68,20 +68,21 @@ def explore_repository(repository_content, depth):
         print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=True))
         ff = pull_folder_content(f)
         if ff:
-            explore_repository(ff, depth + 1)
+            explore_repository(ff, depth + 1)                
     with Pool(10) as p:
         records = p.map(retrieve_lines_and_bytes_from_file, files)
     for f in files:
         print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=False))
     return
 
-repo_names = read_repositories_file()
-for repo_name in repo_names:
-    if not is_valid_repository(repo_name):
-        continue
-    repo_root = pull_folder_content(repo_name)
-    if repo_root:
-        explore_repository(repo_root, depth=0)
+if __name__ == '__main__':
+    repo_names = read_repositories_file()
+    for repo_name in repo_names:
+        if not is_valid_repository(repo_name):
+            continue
+        repo_root = pull_folder_content(repo_name)
+        if repo_root:
+            explore_repository(repo_root, depth=0)
 
 """
 Ideia de como armazenar extensões, linhas e bytes:
