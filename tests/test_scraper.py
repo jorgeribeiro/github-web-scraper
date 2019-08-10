@@ -19,6 +19,11 @@ def test_pull_on_invalid_file():
 def test_retrieve_lines_and_bytes_on_file():
 	assert retrieve_lines_and_bytes_from_file('jorgimello/github-web-scraper/blob/master/repositories.txt') != -1
 
+def test_retrieve_lines_and_bytes_on_non_lines_file():
+	lines, bytes_ = retrieve_lines_and_bytes_from_file('vivadecora/backend-teste/blob/master/vivadecora-logo.png')	
+	assert lines == 0
+	assert bytes_ >= 0
+
 def test_retrieve_lines_and_bytes_on_non_file():
 	assert retrieve_lines_and_bytes_from_file('jorgimello') == -1
 

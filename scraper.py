@@ -2,7 +2,7 @@
 
 from repositories_reader import read_repositories_file
 from repositories_requester import request_url
-from utils import is_valid_repository, calculate_bytes, get_folder_or_file_name
+from utils import is_valid_repository, calculate_bytes, get_folder_or_file_name, generate_str_with_spaces
 
 import re
 from bs4 import BeautifulSoup
@@ -28,32 +28,35 @@ def pull_file_content(url):
 def retrieve_lines_and_bytes_from_file(url):
     """Extrai número de linhas e bytes de um arquivo
     Retorna linhas e bytes se a div for encontrada
-    TODO: possível refatoramento => receber apenas texto em vez do link do arquivo
-    TODO: verificar casos de arquivos sem linhas. Ex: https://github.com/vivadecora/backend-teste/blob/master/vivadecora-logo.png
     """
     div = pull_file_content(url)
     if div:
         div_text = [t.strip() for t in div.get_text().splitlines() if t.strip() != '']
-        l, b = div_text[0], div_text[1]
-        lines = [int(s) for s in l.split() if s.isdigit()][0]
-        bytes_ = calculate_bytes(b)
-        return lines, bytes_
+        if len(div_text) == 2:
+            lines = [int(s) for s in div_text[0].split() if s.isdigit()][0]
+            bytes_ = calculate_bytes(div_text[1])
+            return lines, bytes_            
+        else:
+            # Se o arquivo não possuir linhas (se for uma imagem, por exemplo)
+            lines = 0
+            bytes_ = calculate_bytes(div_text[0])
+            return lines, bytes_
     else:
         return -1
 
-PATH_TO_FOLDERS = '/tree/master'
-PATH_TO_FILES = '/blob/master'
+REGEX_TO_FOLDERS = '/tree/master'
+REGEX_TO_FILES = '/blob/master'
 def extract_hrefs(repository_content):
     """Extrai href de elementos que contenham links para diretórios e arquivos
     Retorna lista com os hrefs encontrados
     """
-    folders_html = repository_content.find_all(href=re.compile(PATH_TO_FOLDERS))
-    files_html = repository_content.find_all(href=re.compile(PATH_TO_FILES))
+    folders_html = repository_content.find_all(href=re.compile(REGEX_TO_FOLDERS))
+    files_html = repository_content.find_all(href=re.compile(REGEX_TO_FILES))
     hrefs_to_folders = [html['href'] for html in folders_html]
     hrefs_to_files = [html['href'] for html in files_html]
     return hrefs_to_folders, hrefs_to_files
 
-def explore_repo_recursively(repository_content):
+def explore_repo_recursively(repository_content, depth=0):
     """Método principal da aplicação
     Percorre recursivamente o repositório
     TODO: imprimir conteúdo do repositório em forma de árvore
@@ -62,12 +65,13 @@ def explore_repo_recursively(repository_content):
     """
     folders, files = extract_hrefs(repository_content)
     for f in folders:
-        print(get_folder_or_file_name(f))
+        print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=True))
         ff = pull_folder_content(f)
         if ff:
-            explore_repo_recursively(ff)
+            explore_repo_recursively(ff, depth + 1)
     for f in files:
-        print(get_folder_or_file_name(f))
+        print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=False))
+        ff = retrieve_lines_and_bytes_from_file(f)
     return
 
 repo_names = read_repositories_file()
@@ -79,6 +83,7 @@ for repo_name in repo_names:
     repo_root = pull_folder_content(repo_name)
     if repo_root:
         # Se repo_root não nulo, repositório encontrado => realizar exploração
+        print('[Project ' + repo_name + ']')
         explore_repo_recursively(repo_root)
 
 """
