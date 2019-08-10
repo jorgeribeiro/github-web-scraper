@@ -6,6 +6,7 @@ from utils import is_valid_repository, calculate_bytes, get_folder_or_file_name,
 
 import re
 from bs4 import BeautifulSoup
+from multiprocessing import Pool
 
 def pull_folder_content(url):
     """Extrai conteúdo de um diretório
@@ -56,35 +57,31 @@ def extract_hrefs(repository_content):
     hrefs_to_files = [html['href'] for html in files_html]
     return hrefs_to_folders, hrefs_to_files
 
-def explore_repo_recursively(repository_content, depth=0):
+def explore_repository(repository_content, depth):
     """Método principal da aplicação
     Percorre recursivamente o repositório
-    TODO: imprimir conteúdo do repositório em forma de árvore
-    TODO: fazer requests nos arquivos e calcular linhas e bytes
     TODO: armazenar tudo no .txt
+    TODO: utilizar dict global para armazenar linhas e bytes dos arquivos
     """
     folders, files = extract_hrefs(repository_content)
     for f in folders:
         print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=True))
         ff = pull_folder_content(f)
         if ff:
-            explore_repo_recursively(ff, depth + 1)
+            explore_repository(ff, depth + 1)
+    with Pool(10) as p:
+        records = p.map(retrieve_lines_and_bytes_from_file, files)
     for f in files:
         print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=False))
-        ff = retrieve_lines_and_bytes_from_file(f)
     return
 
 repo_names = read_repositories_file()
-# 1. Carregar lista de repositórios
 for repo_name in repo_names:
-    # 2. Realizar exploração em cada repositório
     if not is_valid_repository(repo_name):
         continue
     repo_root = pull_folder_content(repo_name)
     if repo_root:
-        # Se repo_root não nulo, repositório encontrado => realizar exploração
-        print('[Project ' + repo_name + ']')
-        explore_repo_recursively(repo_root)
+        explore_repository(repo_root, depth=0)
 
 """
 Ideia de como armazenar extensões, linhas e bytes:
