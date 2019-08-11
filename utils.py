@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import math
 import os
 
 def is_valid_repository(repository_string):
@@ -92,13 +93,34 @@ def get_file_extension(filename):
         # Arquivos com extensão. Retorna a extensão removendo caracteres especiais
         return re.sub('[!@#$~,;´`]', '', s[-1])
 
+def add_spaces(limit, s):
+    """
+    Gera espaços em branco para formatar tabela de extensões
+    a partir do limite informado como argumento
+    """
+    length = limit - len(s)
+    s = ''
+    for _ in range(length):
+        s += ' '
+    return s + '|'
+
 def generate_extensions_table(files_dict):
+    """
+    Recebe dict na forma {'extensão': {'lines', 'bytes'}}
+    e retorna a string de uma tabela
+    """
     s = ''
     total_lines = sum(f['lines'] for f in files_dict.values())
     total_bytes = sum(f['bytes'] for f in files_dict.values())
-    print(total_lines, total_bytes)
-    # s += '    Extensão    |    Linhas    |    Bytes    \n'
-    
+    s += '|       Extensão       |        Linhas        |        Bytes         |\n'
+    for k in files_dict.keys():
+        l = str(files_dict[k]['lines']) + ' (' + '%.1f' % (files_dict[k]['lines'] / total_lines * 100) + '%)'
+        b = str(files_dict[k]['bytes']) + ' (' + '%.1f' % (files_dict[k]['bytes'] / total_bytes * 100) + '%)'
+        ext = k + add_spaces(22, k)        
+        lines = l + add_spaces(22, l)
+        bytes_ = b + add_spaces(22, b)
+        s += '|' + ext + lines + bytes_ + '\n'
+    return s
 
 EXPLORED_REPOS_FOLDER = 'explored_repos/'
 def print_to_file(repo_name, tree_str, files_dict):
@@ -111,4 +133,5 @@ def print_to_file(repo_name, tree_str, files_dict):
     filename = repo_name.replace('/', '_') + '.txt'
     with open(os.getcwd() + '/' + EXPLORED_REPOS_FOLDER + filename, 'w+') as file:
         file.write('[Repositório ' + repo_name + ']\n')
-        file.write(tree_str)
+        file.write(tree_str + '\n')
+        file.write(generate_extensions_table(files_dict))
