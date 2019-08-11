@@ -2,7 +2,7 @@
 
 from repositories_reader import read_repositories_file
 from repositories_requester import request_url
-from utils import is_valid_repository, get_folder_or_file_name, generate_str_with_spaces
+from utils import is_valid_repository, get_folder_or_file_name, get_lines_and_bytes, generate_str_with_spaces, print_to_file
 
 import re
 from bs4 import BeautifulSoup
@@ -55,31 +55,25 @@ def extract_hrefs(repository_content):
     hrefs_to_files = [html['href'] for html in files_html]
     return hrefs_to_folders, hrefs_to_files
 
-def print_to_file(tree_str, repo_name):
-    with open('test.txt', 'w+') as file:
-        file.write('[Project ' + repo_name + ']\n')    
-        file.write(tree_str)
-
 def explore_repository(repo_name, depth=0, tree_str=''):
     """Método principal da aplicação
     Percorre recursivamente o repositório
-    TODO: armazenar tudo no .txt
     TODO: utilizar dict global para armazenar linhas e bytes dos arquivos
     """
-    repository_content = pull_folder_content(repo_name)    
+    repository_content = pull_folder_content(repo_name)
     if (repository_content):
         folders, files = extract_hrefs(repository_content)
         for f in folders:
             tree_str += generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=True)
-            print(tree_str)
-            explore_repository(f, depth + 1, tree_str)
+            tree_str = explore_repository(f, depth + 1, tree_str)
         for f in files:
-            tree_str += generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=False)
-            print(tree_str)
-            # pull_file_content(f)
+            file_content = pull_file_content(f)
+            lines, bytes_ = get_lines_and_bytes(file_content)
+            tree_str += generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=False, loc=lines)
         if depth == 0:
             print_to_file(tree_str, repo_name)
-        return
+            # colocar linhas e bytes das extensões
+        return tree_str
     else:
         return
 

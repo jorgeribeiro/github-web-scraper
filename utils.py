@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 def is_valid_repository(repository_string):
     """Verifica se repositório está no formato <dono-do-projeto>/<nome-do-projeto>
     Evita requests em links existentes, mas que não estão no formato válido
@@ -55,7 +57,7 @@ def get_lines_and_bytes(l):
     else:
         return -1
 
-def generate_str_with_spaces(depth, folder_or_file_name, is_folder):
+def generate_str_with_spaces(depth, folder_or_file_name, is_folder, loc=0):
     """Gera string com espaços de acordo com depth
     String gerada é utilizada para imprimir árvore de arquivos
     """
@@ -67,7 +69,7 @@ def generate_str_with_spaces(depth, folder_or_file_name, is_folder):
     if is_folder:
         return s + '|__[' + folder_or_file_name + ']\n'
     else:
-        return s + '|__' + folder_or_file_name + ' (n linhas)\n'
+        return s + '|__' + folder_or_file_name + ' (' + str(loc) + ' linhas)\n'
 
 def get_file_extension(filename):
     """Retorna tipo de extensão a partir do nome do arquivo
@@ -81,3 +83,17 @@ def get_file_extension(filename):
         return '<outros>'
     else:
         return s[-1]
+
+EXPLORED_REPOS_FOLDER = 'explored_repos/'
+def print_to_file(s, repo_name):
+    """Escreve arquivo com informações do repositório explorado
+    Também verifica existência do diretório EXPLORED_REPOS_FOLDER,
+    é criado caso não exista
+    TODO: adicionar testes
+    """
+    if not os.path.isdir(os.getcwd() + '/' + EXPLORED_REPOS_FOLDER):
+        os.mkdir(EXPLORED_REPOS_FOLDER)
+    filename = repo_name.replace('/', '_') + '.txt'
+    with open(os.getcwd() + '/' + EXPLORED_REPOS_FOLDER + filename, 'w+') as file:
+        file.write('[Repositório ' + repo_name + ']\n')
+        file.write(s)
