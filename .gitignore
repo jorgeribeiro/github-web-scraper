@@ -128,5 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Folder added to ignore
+/explored_repos
+
 # End of https://www.gitignore.io/api/python
-w

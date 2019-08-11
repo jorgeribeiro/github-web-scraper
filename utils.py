@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import re
 import os
 
 def is_valid_repository(repository_string):
-    """Verifica se repositório está no formato <dono-do-projeto>/<nome-do-projeto>
+    """
+    Verifica se repositório está no formato <dono-do-projeto>/<nome-do-projeto>
     Evita requests em links existentes, mas que não estão no formato válido
     """
     words = repository_string.split('/')
@@ -12,7 +14,8 @@ def is_valid_repository(repository_string):
     return False
 
 def calculate_bytes(size_unit_str):
-    """Calcula bytes de um arquivo
+    """
+    Calcula bytes de um arquivo
     Recebe uma string de tamanho 2 no formato 'size unit'
     """
     try:
@@ -29,7 +32,8 @@ def calculate_bytes(size_unit_str):
         return -1
 
 def get_folder_or_file_name(href=''):
-    """Retorna nome do diretório ou arquivo
+    """
+    Retorna nome do diretório ou arquivo
     Recebe uma string no formato caminho/para/diretorio
     ou caminho/para/arquivo
     """
@@ -39,26 +43,28 @@ def get_folder_or_file_name(href=''):
     else:
         return ''
 
+# TODO: refatorar
 def get_lines_and_bytes(l):
-    """Retorna quantidade de linhas e bytes
+    """
+    Retorna quantidade de linhas e bytes
     Recebe uma lista de tamanho dois (para arquivos com linhas de código)
     ou tamanho um (para arquivos sem linhas de código)
     """
-    if l:
-        if len(l) == 2:
-            lines = [int(s) for s in l[0].split() if s.isdigit()][0]
-            bytes_ = calculate_bytes(l[1])
-            return lines, bytes_            
-        else:
-            # Se o arquivo não possuir linhas (se for uma imagem, por exemplo)
-            lines = 0
-            bytes_ = calculate_bytes(l[0])
-            return lines, bytes_
+    if len(l) == 2:
+        lines = [int(s) for s in l[0].split() if s.isdigit()][0]
+        bytes_ = calculate_bytes(l[1])
+        return lines, bytes_           
+    elif len(l) == 1:
+        # Se o arquivo não possuir linhas (se for uma imagem, por exemplo)
+        lines = 0
+        bytes_ = calculate_bytes(l[0])
+        return lines, bytes_
     else:
         return -1
 
 def generate_str_with_spaces(depth, folder_or_file_name, is_folder, loc=0):
-    """Gera string com espaços de acordo com depth
+    """
+    Gera string com espaços de acordo com depth
     String gerada é utilizada para imprimir árvore de arquivos
     """
     s = ''
@@ -71,29 +77,32 @@ def generate_str_with_spaces(depth, folder_or_file_name, is_folder, loc=0):
     else:
         return s + '|__' + folder_or_file_name + ' (' + str(loc) + ' linhas)\n'
 
+# TODO: refatorar
 def get_file_extension(filename):
-    """Retorna tipo de extensão a partir do nome do arquivo
+    """
+    Retorna tipo de extensão a partir do nome do arquivo
     Verifica também casos em que não há extensão definida
-    TODO: adicionar testes
     """
     s = filename.split('.')
     if len(s) == 1:
+        # Arquivos sem extensão. Ex: Dockerfile
         return '<outros>'
     elif len(s) == 2 and s[0] == '':
+        # Arquivos sem extensão mas que apresentem ponto. Ex: .htaccess
         return '<outros>'
     else:
-        return s[-1]
+        # Arquivos com extensão. Retorna a extensão removendo caracteres especiais
+        return re.sub('[!@#$~,;´`]', '', s[-1])
 
 EXPLORED_REPOS_FOLDER = 'explored_repos/'
-def print_to_file(s, repo_name):
-    """Escreve arquivo com informações do repositório explorado
-    Também verifica existência do diretório EXPLORED_REPOS_FOLDER,
-    é criado caso não exista
-    TODO: adicionar testes
+def print_to_file(repo_name, tree_str, files_dict):
+    """
+    Escreve arquivo com informações do repositório explorado
+    Verifica existência do diretório EXPLORED_REPOS_FOLDER, que é criado caso não exista
     """
     if not os.path.isdir(os.getcwd() + '/' + EXPLORED_REPOS_FOLDER):
         os.mkdir(EXPLORED_REPOS_FOLDER)
     filename = repo_name.replace('/', '_') + '.txt'
     with open(os.getcwd() + '/' + EXPLORED_REPOS_FOLDER + filename, 'w+') as file:
         file.write('[Repositório ' + repo_name + ']\n')
-        file.write(s)
+        file.write(tree_str)
