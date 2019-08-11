@@ -56,7 +56,7 @@ def explore_file(file_href):
     if len(file_content) == 2:
         return filename, lines, bytes_, get_file_extension(filename)
     else:
-        return filename, lines, bytes_, '<nloc>'   
+        return filename, lines, bytes_, '<nloc>'
 
 def include_extension_in_files_dict(f_dict, lines, bytes_, extension):
     """
@@ -64,28 +64,32 @@ def include_extension_in_files_dict(f_dict, lines, bytes_, extension):
     f_dict é assumido já instanciado
     Formato do dict: {'extensão': {'lines', 'bytes'}}
     """
+    if not f_dict:
+        f_dict = {}
     if extension not in f_dict:
         f_dict[extension] = {'lines': lines, 'bytes': bytes_}
     else:
         current_lines, current_bytes = f_dict[extension]['lines'], f_dict[extension]['bytes']
         f_dict[extension] = {'lines': current_lines + lines, 'bytes': current_bytes + bytes_}
-    return f_dict         
+    return f_dict
 
-def explore_repository(repo_name, depth=0, tree_str='', files_dict={}):
+def explore_repository(repo_name, depth=0):
     """
     Método principal da aplicação
     Percorre recursivamente o repositório
     """
     repository_content = pull_folder_content(repo_name)
     if (repository_content):
+        tree_str = ''
+        files_dict = {}
         folders, files = extract_hrefs(repository_content)
         for f in folders:
             tree_str += generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=True)
-            tree_str, files_dict = explore_repository(f, depth + 1, tree_str)
+            tree_str, files_dict = explore_repository(f, depth + 1)
         for f in files:
             filename, lines, bytes_, extension = explore_file(f)
             files_dict = include_extension_in_files_dict(files_dict, lines=lines, bytes_=bytes_, extension=extension)
-            tree_str += generate_str_with_spaces(depth, filename, is_folder=False, loc=lines)            
+            tree_str += generate_str_with_spaces(depth, filename, is_folder=False, loc=lines)
         if depth == 0:
             print_to_file(repo_name, tree_str, files_dict)
             generate_extensions_table(files_dict)
