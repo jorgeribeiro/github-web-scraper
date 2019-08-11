@@ -43,7 +43,6 @@ def get_folder_or_file_name(href=''):
     else:
         return ''
 
-# TODO: refatorar
 def get_lines_and_bytes(l):
     """
     Retorna quantidade de linhas e bytes
@@ -77,7 +76,6 @@ def generate_str_with_spaces(depth, folder_or_file_name, is_folder, loc=0):
     else:
         return s + '|__' + folder_or_file_name + ' (' + str(loc) + ' linhas)\n'
 
-# TODO: refatorar
 def get_file_extension(filename):
     """
     Retorna tipo de extensão a partir do nome do arquivo
@@ -93,6 +91,14 @@ def get_file_extension(filename):
     else:
         # Arquivos com extensão. Retorna a extensão removendo caracteres especiais
         return re.sub('[!@#$~,;´`]', '', s[-1])
+
+def generate_extensions_table(files_dict):
+    s = ''
+    total_lines = sum(f['lines'] for f in files_dict.values())
+    total_bytes = sum(f['bytes'] for f in files_dict.values())
+    print(total_lines, total_bytes)
+    # s += '    Extensão    |    Linhas    |    Bytes    \n'
+    
 
 EXPLORED_REPOS_FOLDER = 'explored_repos/'
 def print_to_file(repo_name, tree_str, files_dict):
