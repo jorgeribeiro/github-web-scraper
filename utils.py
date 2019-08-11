@@ -61,14 +61,13 @@ def generate_str_with_spaces(depth, folder_or_file_name, is_folder):
     """
     s = ''
     for _ in range(depth):
-        s = s + '|'
+        s += '|'
         for _ in range(3):
-            s = s + ' '
-    s = s + '|__'
+            s += ' '
     if is_folder:
-        return s + '[' + folder_or_file_name + ']'
+        return s + '|__[' + folder_or_file_name + ']\n'
     else:
-        return s + folder_or_file_name + ' (n linhas)'
+        return s + '|__' + folder_or_file_name + ' (n linhas)\n'
 
 def get_file_extension(filename):
     """Retorna tipo de extensão a partir do nome do arquivo

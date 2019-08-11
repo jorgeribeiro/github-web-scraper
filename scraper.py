@@ -30,13 +30,12 @@ def pull_file_content(url):
     else:
         return []
 
-def handle_files_dict(f_dict, lines, bytes_, extension):
+def handle_files_dict(lines, bytes_, extension):
     """Manuseia informações dos arquivos do repositório
     Dados são inseridos e retornados em um dict
+    TODO: como lidar com arquivos sem linha de código?
     TODO: adicionar testes
     """
-    if not f_dict:
-        f_dict = {}
     if extension not in f_dict:
         f_dict[extension] = {'lines': lines, 'bytes': bytes_}
     else:
@@ -56,21 +55,30 @@ def extract_hrefs(repository_content):
     hrefs_to_files = [html['href'] for html in files_html]
     return hrefs_to_folders, hrefs_to_files
 
-def explore_repository(repo_name, depth=0):
+def print_to_file(tree_str, repo_name):
+    with open('test.txt', 'w+') as file:
+        file.write('[Project ' + repo_name + ']\n')    
+        file.write(tree_str)
+
+def explore_repository(repo_name, depth=0, tree_str=''):
     """Método principal da aplicação
     Percorre recursivamente o repositório
     TODO: armazenar tudo no .txt
     TODO: utilizar dict global para armazenar linhas e bytes dos arquivos
     """
-    repository_content = pull_folder_content(repo_name)
+    repository_content = pull_folder_content(repo_name)    
     if (repository_content):
         folders, files = extract_hrefs(repository_content)
         for f in folders:
-            # print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=True))
-            explore_repository(f, depth + 1)
+            tree_str += generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=True)
+            print(tree_str)
+            explore_repository(f, depth + 1, tree_str)
         for f in files:
-            # print(generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=False))
-            pull_file_content(f)
+            tree_str += generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=False)
+            print(tree_str)
+            # pull_file_content(f)
+        if depth == 0:
+            print_to_file(tree_str, repo_name)
         return
     else:
         return
