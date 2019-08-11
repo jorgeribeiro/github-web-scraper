@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import pytest
-
 from repositories_requester import request_url
 
 def test_existent_repo_url():

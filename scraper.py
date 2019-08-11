@@ -2,7 +2,7 @@
 
 from repositories_reader import read_repositories_file
 from repositories_requester import request_url
-from utils import is_valid_repository, get_folder_or_file_name, get_lines_and_bytes, generate_str_with_spaces, get_file_extension, generate_extensions_table, print_to_file
+from utils import is_valid_repository, get_folder_or_file_name, get_lines_and_bytes, generate_str_with_spaces, get_file_extension, print_to_file
 
 import re
 from bs4 import BeautifulSoup
@@ -51,12 +51,10 @@ def explore_file(file_href):
     Retorna nome, linhas, bytes e extensão do arquivo recebido
     """
     file_content = pull_file_content(file_href)
+    print(file_href)
     lines, bytes_ = get_lines_and_bytes(file_content)
     filename = get_folder_or_file_name(file_href)
-    if len(file_content) == 2:
-        return filename, lines, bytes_, get_file_extension(filename)
-    else:
-        return filename, lines, bytes_, '<nloc>'
+    return filename, lines, bytes_, get_file_extension(filename)
 
 def include_extension_in_files_dict(f_dict, lines, bytes_, extension):
     """
@@ -80,11 +78,13 @@ def explore_repository(repo_name, depth=0):
     """
     repository_content = pull_folder_content(repo_name)
     if (repository_content):
+        if depth == 0:
+            print('[+] Scraping no repositório ' + repo_name + ' iniciado...')
         tree_str = ''
         files_dict = {}
         folders, files = extract_hrefs(repository_content)
         for f in folders:
-            tree_str += generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=True)
+            tree_str += generate_str_with_spaces(depth, get_folder_or_file_name(f, parent_folder=repo_name), is_folder=True)
             tree_str, files_dict = explore_repository(f, depth + 1)
         for f in files:
             filename, lines, bytes_, extension = explore_file(f)
@@ -92,7 +92,7 @@ def explore_repository(repo_name, depth=0):
             tree_str += generate_str_with_spaces(depth, filename, is_folder=False, loc=lines)
         if depth == 0:
             print_to_file(repo_name, tree_str, files_dict)
-            generate_extensions_table(files_dict)
+            print('[+] Scraping no repositório ' + repo_name + ' finalizado!')
         return tree_str, files_dict
     else:
         return

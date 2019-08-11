@@ -32,30 +32,43 @@ def calculate_bytes(size_unit_str):
     except ValueError:
         return -1
 
-def get_folder_or_file_name(href=''):
+def get_folder_or_file_name(href='', parent_folder=''):
     """
     Retorna nome do diretório ou arquivo
     Recebe uma string no formato caminho/para/diretorio
     ou caminho/para/arquivo
+    O argumento parent_folder foi adicionado para fazer a validação de 
+    pastas vazias que possam existir. As mesmas são impressas como
+    [diretorio_vazio/diretorio]
     """
     name = href.split('/')
     if len(name) > 1:
-        return name[-1]
+        if len(parent_folder) == 0:
+            return name[-1]
+        else:
+            parent_name = parent_folder.split('/')
+            if name[-2] == parent_name[-1]:
+                return name[-1]
+            else:
+                # Caso especial quando existir uma pasta vazia e o github fizer um 'skip'
+                return name[-2] + '/' + name[-1]
     else:
         return ''
 
 def get_lines_and_bytes(l):
     """
-    Retorna quantidade de linhas e bytes
-    Recebe uma lista de tamanho dois (para arquivos com linhas de código)
-    ou tamanho um (para arquivos sem linhas de código)
+    Retorna quantidade de linhas e bytes de um arquivo
     """
+    print(l)
     if len(l) == 2:
-        lines = [int(s) for s in l[0].split() if s.isdigit()][0]
+        digit_found = [int(s) for s in l[0].split() if s.isdigit()]
+        if digit_found:
+            lines = [int(s) for s in l[0].split() if s.isdigit()][0]
+        else:
+            lines = 0
         bytes_ = calculate_bytes(l[1])
         return lines, bytes_           
     elif len(l) == 1:
-        # Se o arquivo não possuir linhas (se for uma imagem, por exemplo)
         lines = 0
         bytes_ = calculate_bytes(l[0])
         return lines, bytes_
@@ -107,7 +120,7 @@ def add_spaces(limit, s):
 def generate_extensions_table(files_dict):
     """
     Recebe dict na forma {'extensão': {'lines', 'bytes'}}
-    e retorna a string de uma tabela
+    e retorna a string de uma tabela com extensões, linhas e bytes
     """
     s = ''
     total_lines = sum(f['lines'] for f in files_dict.values())

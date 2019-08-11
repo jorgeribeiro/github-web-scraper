@@ -38,7 +38,7 @@ def test_file_explore_on_non_lines_file():
     assert filename == 'vivadecora-logo.png'
     assert lines == 0
     assert bytes_ >= 0
-    assert extension == '<nloc>' # No lines of code
+    assert extension == 'png' # No lines of code
 
 def test_include_file_in_dict():
     f_dict = {}
