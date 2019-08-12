@@ -2,8 +2,9 @@ language: python
 python:
   - "3.5.2"
 install:
-  - 'pip install pipenv pytest'
-  - 'pipenv install'
-script: 'python -m pytest --cov=pyblizzard tests --cov-report=xml'
+  - pip install pipenv pytest
+  - pipenv install
+script:
+  - pytest
 after_success:
-  - 'python-codacy-coverage -r coverage.xml'  
+  - python-codacy-coverage -r coverage.xml
