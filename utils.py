@@ -120,8 +120,8 @@ def generate_extensions_table(files_dict):
     total_bytes = sum(f['bytes'] for f in files_dict.values())
     s += '|       Extensão       |        Linhas        |        Bytes         |\n'
     for k in files_dict.keys():
-        l = str(files_dict[k]['lines']) + ' (' + '%.1f' % (files_dict[k]['lines'] / total_lines * 100) + '%)'
-        b = str('%.1f' % (files_dict[k]['bytes'])) + ' (' + '%.1f' % (files_dict[k]['bytes'] / total_bytes * 100) + '%)'
+        l = str(files_dict[k]['lines']) + ' (' + '%.1f' % (files_dict[k]['lines'] / total_lines * 100) + '%)' if total_lines != 0 else 0
+        b = str('%.1f' % (files_dict[k]['bytes'])) + ' (' + '%.1f' % (files_dict[k]['bytes'] / total_bytes * 100) + '%)' if total_bytes != 0 else 0
         ext = k + add_spaces(22, k)        
         lines = l + add_spaces(22, l)
         bytes_ = b + add_spaces(22, b)
