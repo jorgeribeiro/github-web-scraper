@@ -21,7 +21,7 @@ Web scraping que busca informações de projetos públicos do Github e compila o
 4. `pipenv shell` (para ativar o virtualenv. Etapa é necessária sempre que abrir um terminal novo dentro da pasta do projeto)
 
 ## Como utilizar
-Após executar os passos acima corretamente, execute `python scraper.py` dentro da pasta do projeto. Caso o arquivo repositories.txt não exista, o programa criará um na raiz do projeto. Adicione os repositórios que deseja realizar o scraping nesse .txt (cada um em uma linha diferente) e execute `python scraper.py` novamente.
+Após executar os passos acima corretamente, execute `python scraper.py` dentro da pasta do projeto. Caso o arquivo repositories.txt não exista, o programa criará um na raiz do projeto. Adicione os repositórios que deseja realizar o scraping nesse .txt (cada um em uma linha diferente) no formato `username/repositorio` (exemplo: `jorgimello/heart-disease-classifier`) e execute `python scraper.py` novamente.
 
 Para executar os testes unitários, basta executar `pytest` dentro da pasta do projeto.
 
