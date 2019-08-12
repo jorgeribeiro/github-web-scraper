@@ -89,7 +89,7 @@ def explore_repository(repo_name, tree_str='', files_dict=None, depth=0):
             tree_str += generate_str_with_spaces(depth, filename, is_folder=False, loc=lines)
         if depth == 0:
             print_to_file(repo_name, tree_str, files_dict)
-            print('[+] Scraping no repositório ' + repo_name + ' finalizado!')        
+            print('[+] Scraping no repositório ' + repo_name + ' finalizado!')
         return tree_str, files_dict
     else:
         return
