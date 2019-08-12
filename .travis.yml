@@ -1,17 +1,9 @@
 language: python
 python:
   - "3.5.2"
-matrix:
-  include:
-    - python: 3.5
-    - python: 3.6
-    - python: 3.7
-    dist: xenial
-    sudo: true
 install:
-  - pip install pipenv pytest
-  - pipenv install
-  - pytest
-# command to run tests
-script:
-  - pytest
+  - 'pip install pipenv pytest'
+  - 'pipenv install'
+script: 'python -m pytest --cov=pyblizzard tests --cov-report=xml'
+after_success:
+  - 'python-codacy-coverage -r coverage.xml'  

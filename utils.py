@@ -97,7 +97,7 @@ def get_file_extension(filename):
         return '<outros>'
     else:
         # Arquivos com extensão. Retorna a extensão removendo caracteres especiais
-        return re.sub('[!@#$~,;´`]', '', s[-1])
+        return re.sub('[!@#$~]', '', s[-1])
 
 def add_spaces(limit, s):
     """
