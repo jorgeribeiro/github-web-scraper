@@ -44,5 +44,5 @@ def test_get_file_extensions():
     assert get_file_extension('.gitignore') == '<outros>'
     assert get_file_extension('Makefile') == '<outros>'
     assert get_file_extension('file.txt') == 'txt'
-    assert get_file_extension('file.txt~') == 'txt'
+    assert get_file_extension('file.txt~') == 'txt~'
     assert get_file_extension('.file.yml') == 'yml'
