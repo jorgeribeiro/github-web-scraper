@@ -61,8 +61,6 @@ def include_extension_in_files_dict(f_dict, lines, bytes_, extension):
     f_dict é assumido já instanciado
     Formato do dict: {'extensão': {'lines', 'bytes'}}
     """
-    if not f_dict:
-        f_dict = {}
     if extension not in f_dict:
         f_dict[extension] = {'lines': lines, 'bytes': bytes_}
     else:
@@ -100,8 +98,9 @@ ASYNC_EXPLORATION = 3
 if __name__ == '__main__':
     repo_names = read_repositories_file()
     valid_repos = [repo for repo in repo_names if is_valid_repository(repo)]
-    print('[+] Iniciando exploração dos repositórios...')
-    print('[+] [ATENÇÃO] A duração do processamento depende do tamanho do repositório.')
+    if valid_repos:
+        print('[+] Iniciando exploração dos repositórios...')
+        print('[+] [ATENÇÃO] A duração do processamento depende do tamanho do repositório.')
     if len(valid_repos) >= 2:
         with Pool(ASYNC_EXPLORATION) as p:
             # Explorar até 3 repositórios paralelamente

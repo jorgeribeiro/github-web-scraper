@@ -130,5 +130,7 @@ dmypy.json
 
 # Folder added to ignore
 /explored_repos
+requirements.txt
+setup.py
 
 # End of https://www.gitignore.io/api/python

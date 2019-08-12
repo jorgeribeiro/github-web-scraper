@@ -15,10 +15,13 @@ Web scraping que busca informações de projetos públicos do Github e compila o
 - pytest
 
 ## Instalação
-[Em construção]
+1. `git clone https://github.com/jorgimello/github-web-scraper.git`
+2. `cd github-web-scraper/`
+3. `pipenv install` (cria um virtualenv com as dependências)
+4. `pipenv shell` (para ativar o virtualenv. Etapa é necessária sempre que abrir um terminal novo dentro da pasta do projeto)
 
 ## Como utilizar
-Após instalar corretamente, execute `python scraper.py` dentro da pasta do projeto. Caso o arquivo repositories.txt não exista, o programa criará um na raiz do projeto. Adicione os repositórios que deseja realizar o scraping nesse .txt (cada um em uma linha diferente) e execute `python scraper.py` novamente.
+Após executar os passos acima corretamente, execute `python scraper.py` dentro da pasta do projeto. Caso o arquivo repositories.txt não exista, o programa criará um na raiz do projeto. Adicione os repositórios que deseja realizar o scraping nesse .txt (cada um em uma linha diferente) e execute `python scraper.py` novamente.
 
 Ao iniciar o scraping em um repositório, no console será mostrado a mensagem `[+] Scraping no repositório user/repositorio iniciado...` e ao finalizar, `[+] Scraping no repositório user/repositorio iniciado finalizado!`. Para repositórios muito grandes, o processo pode levar algum tempo.
 
