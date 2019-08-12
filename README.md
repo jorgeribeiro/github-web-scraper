@@ -23,6 +23,8 @@ Web scraping que busca informações de projetos públicos do Github e compila o
 ## Como utilizar
 Após executar os passos acima corretamente, execute `python scraper.py` dentro da pasta do projeto. Caso o arquivo repositories.txt não exista, o programa criará um na raiz do projeto. Adicione os repositórios que deseja realizar o scraping nesse .txt (cada um em uma linha diferente) e execute `python scraper.py` novamente.
 
+Para executar os testes unitários, basta executar `pytest` dentro da pasta do projeto.
+
 Ao iniciar o scraping em um repositório, no console será mostrado a mensagem `[+] Scraping no repositório user/repositorio iniciado...` e ao finalizar, `[+] Scraping no repositório user/repositorio iniciado finalizado!`. Para repositórios muito grandes, o processo pode levar algum tempo.
 
 ## Ideias e observações
