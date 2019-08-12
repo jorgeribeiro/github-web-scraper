@@ -51,7 +51,7 @@ def get_lines_and_bytes(l):
     """
     if len(l) == 3: # ['text', 'n lines', 'm Bytes']
         lines = [int(s) for s in l[1].split() if s.isdigit()][0]
-        bytes_ = calculate_bytes(l[1])
+        bytes_ = calculate_bytes(l[2])
         return lines, bytes_
     elif len(l) == 2: # ['n lines', 'm Bytes'] ou ['text', 'm Bytes']
         digit_found = [int(s) for s in l[0].split() if s.isdigit()]
