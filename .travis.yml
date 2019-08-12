@@ -1,13 +1,17 @@
 language: python
 python:
   - "3.5.2"
-before_install:
-  - pip install -U pip
-  - python setup.py install
-  - export PYTHONPATH=$PYTHONPATH:$(pwd)
-# command to install dependencies
+matrix:
+  include:
+    - python: 3.5
+    - python: 3.6
+    - python: 3.7
+    dist: xenial
+    sudo: true
 install:
-  - pip install -r requirements.txt
+  - pip install pipenv pytest
+  - pipenv install
+  - pytest
 # command to run tests
 script:
   - pytest

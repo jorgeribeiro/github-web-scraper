@@ -40,7 +40,7 @@ def get_folder_or_file_name(href=''):
     """
     name = href.split('/')
     if len(name) > 1:
-        return name[-1]        
+        return name[-1].replace('%20', ' ') # %20 equivale a um espaço no href        
     else:
         return ''
 

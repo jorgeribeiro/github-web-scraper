@@ -96,11 +96,14 @@ def explore_repository(repo_name, tree_str='', files_dict=None, depth=0):
     else:
         return
 
+ASYNC_EXPLORATION = 3
 if __name__ == '__main__':
     repo_names = read_repositories_file()
     valid_repos = [repo for repo in repo_names if is_valid_repository(repo)]
+    print('[+] Iniciando exploração dos repositórios...')
+    print('[+] [ATENÇÃO] A duração do processamento depende do tamanho do repositório.')
     if len(valid_repos) >= 2:
-        with Pool(3) as p:
+        with Pool(ASYNC_EXPLORATION) as p:
             # Explorar até 3 repositórios paralelamente
             p.map(explore_repository, valid_repos)
     else:
