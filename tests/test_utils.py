@@ -31,7 +31,7 @@ def test_get_name_with_no_args():
 def test_get_lines_and_bytes_on_empty_list():
 	assert get_lines_and_bytes(l = []) == -1
 
-@pytest.mark.parametrize('l', (['36 lines (25 sloc)', '1.29 KB'], ['11.9 KB']))
+@pytest.mark.parametrize('l', (['36 lines (25 sloc)', '1.29 KB'], ['11.9 KB'], ['executable file', '15 lines (15 sloc)', '1.75 KB']))
 def test_get_lines_and_bytes_on_valid_args(l):
 	assert get_lines_and_bytes(l) != -1
 

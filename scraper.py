@@ -51,7 +51,6 @@ def explore_file(file_href):
     Retorna nome, linhas, bytes e extensão do arquivo recebido
     """
     file_content = pull_file_content(file_href)
-    print(file_href)
     lines, bytes_ = get_lines_and_bytes(file_content)
     filename = get_folder_or_file_name(file_href)
     return filename, lines, bytes_, get_file_extension(filename)
@@ -71,7 +70,7 @@ def include_extension_in_files_dict(f_dict, lines, bytes_, extension):
         f_dict[extension] = {'lines': current_lines + lines, 'bytes': current_bytes + bytes_}
     return f_dict
 
-def explore_repository(repo_name, depth=0):
+def explore_repository(repo_name, tree_str='', files_dict=None, depth=0):
     """
     Método principal da aplicação
     Percorre recursivamente o repositório
@@ -80,19 +79,19 @@ def explore_repository(repo_name, depth=0):
     if (repository_content):
         if depth == 0:
             print('[+] Scraping no repositório ' + repo_name + ' iniciado...')
-        tree_str = ''
-        files_dict = {}
+        if files_dict is None:
+            files_dict = {}
         folders, files = extract_hrefs(repository_content)
         for f in folders:
-            tree_str += generate_str_with_spaces(depth, get_folder_or_file_name(f, parent_folder=repo_name), is_folder=True)
-            tree_str, files_dict = explore_repository(f, depth + 1)
+            tree_str += generate_str_with_spaces(depth, get_folder_or_file_name(f), is_folder=True)
+            tree_str, files_dict = explore_repository(f, tree_str=tree_str, files_dict=files_dict, depth=depth + 1)
         for f in files:
             filename, lines, bytes_, extension = explore_file(f)
             files_dict = include_extension_in_files_dict(files_dict, lines=lines, bytes_=bytes_, extension=extension)
             tree_str += generate_str_with_spaces(depth, filename, is_folder=False, loc=lines)
         if depth == 0:
             print_to_file(repo_name, tree_str, files_dict)
-            print('[+] Scraping no repositório ' + repo_name + ' finalizado!')
+            print('[+] Scraping no repositório ' + repo_name + ' finalizado!')        
         return tree_str, files_dict
     else:
         return

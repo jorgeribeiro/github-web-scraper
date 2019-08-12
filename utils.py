@@ -32,43 +32,36 @@ def calculate_bytes(size_unit_str):
     except ValueError:
         return -1
 
-def get_folder_or_file_name(href='', parent_folder=''):
+def get_folder_or_file_name(href=''):
     """
     Retorna nome do diretório ou arquivo
     Recebe uma string no formato caminho/para/diretorio
     ou caminho/para/arquivo
-    O argumento parent_folder foi adicionado para fazer a validação de 
-    pastas vazias que possam existir. As mesmas são impressas como
-    [diretorio_vazio/diretorio]
     """
     name = href.split('/')
     if len(name) > 1:
-        if len(parent_folder) == 0:
-            return name[-1]
-        else:
-            parent_name = parent_folder.split('/')
-            if name[-2] == parent_name[-1]:
-                return name[-1]
-            else:
-                # Caso especial quando existir uma pasta vazia e o github fizer um 'skip'
-                return name[-2] + '/' + name[-1]
+        return name[-1]        
     else:
         return ''
 
 def get_lines_and_bytes(l):
     """
     Retorna quantidade de linhas e bytes de um arquivo
+    Recebe como argumento uma lista com os dados do arquivo
     """
-    print(l)
-    if len(l) == 2:
+    if len(l) == 3: # ['text', 'n lines', 'm Bytes']
+        lines = [int(s) for s in l[1].split() if s.isdigit()][0]
+        bytes_ = calculate_bytes(l[1])
+        return lines, bytes_
+    elif len(l) == 2: # ['n lines', 'm Bytes'] ou ['text', 'm Bytes']
         digit_found = [int(s) for s in l[0].split() if s.isdigit()]
         if digit_found:
             lines = [int(s) for s in l[0].split() if s.isdigit()][0]
         else:
             lines = 0
         bytes_ = calculate_bytes(l[1])
-        return lines, bytes_           
-    elif len(l) == 1:
+        return lines, bytes_
+    elif len(l) == 1: # ['m Bytes']
         lines = 0
         bytes_ = calculate_bytes(l[0])
         return lines, bytes_
@@ -128,7 +121,7 @@ def generate_extensions_table(files_dict):
     s += '|       Extensão       |        Linhas        |        Bytes         |\n'
     for k in files_dict.keys():
         l = str(files_dict[k]['lines']) + ' (' + '%.1f' % (files_dict[k]['lines'] / total_lines * 100) + '%)'
-        b = str(files_dict[k]['bytes']) + ' (' + '%.1f' % (files_dict[k]['bytes'] / total_bytes * 100) + '%)'
+        b = str('%.1f' % (files_dict[k]['bytes'])) + ' (' + '%.1f' % (files_dict[k]['bytes'] / total_bytes * 100) + '%)'
         ext = k + add_spaces(22, k)        
         lines = l + add_spaces(22, l)
         bytes_ = b + add_spaces(22, b)

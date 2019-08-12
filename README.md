@@ -14,7 +14,13 @@ Web scraping que busca informações de projetos públicos do Github e compila o
 - requests
 - pytest
 
+## Instalação
+[Em construção]
+
 ## Ideias
-- Como não utiliza o Scrapy, utilizei a biblioteca multiprocessing para fazer a exploração dos repositórios de forma assíncrona
+- Utilizei a biblioteca multiprocessing para fazer a exploração dos repositórios com Bealtiful Soup de forma assíncrona
 - Não faz uso de bibliotecas para construir e imprimir a árvore de arquivos. Tudo é tratado pelo método recursivo explore_repository em scraper.py
-- Realiza a contagem de bytes de arquivos que não possuam linhas de código, como imagens
+- Realiza a contagem de bytes de arquivos que não possuam linhas de código
+
+## Melhorias
+Aplicar uma estrutura de árvores com pais e filhos, estruturando o caminho das pastas e arquivos do repositório, e assim poder fazer a exploração das pastas de forma assíncrona.
