@@ -25,10 +25,10 @@ Após executar os passos acima corretamente, execute `python scraper.py` dentro 
 
 Para executar os testes unitários, basta executar `pytest` dentro da pasta do projeto.
 
-Ao iniciar o scraping em um repositório, no console será mostrado a mensagem `[+] Scraping no repositório user/repositorio iniciado...` e ao finalizar, `[+] Scraping no repositório user/repositorio iniciado finalizado!`. Para repositórios muito grandes, o processo pode levar algum tempo.
+Ao iniciar o scraping em um repositório, no console será mostrada a mensagem `[+] Scraping no repositório user/repositorio iniciado...` e ao finalizar, `[+] Scraping no repositório user/repositorio iniciado finalizado!`. Para repositórios muito grandes, o processo pode levar algum tempo.
 
 ## Ideias e observações
-- Utilizei a biblioteca multiprocessing para fazer a exploração dos repositórios com Bealtiful Soup de forma assíncrona
+- Utilizei a biblioteca multiprocessing para fazer a exploração dos repositórios com Beautiful Soup de forma assíncrona
 - Não faz uso de bibliotecas para construir e imprimir a árvore de arquivos. Tudo é tratado pelo método recursivo explore_repository em scraper.py
 - Realiza a contagem de bytes de arquivos que não possuam linhas de código
 - Submódulos não são incluídos na árvore de arquivos
